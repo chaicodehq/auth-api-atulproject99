@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:7.0
     container_name: auth-api-mongodb
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "27018:27017"
     environment:
       # Database name that will be created automatically
       MONGO_INITDB_DATABASE: auth_api

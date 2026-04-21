@@ -1,5 +1,5 @@
-import { User } from '../models/user.model.js';
-
+import mongoose from "mongoose";
+import User from "../models/user.model.js";
 /**
  * TODO: List all users (Admin only)
  *
@@ -8,6 +8,8 @@ import { User } from '../models/user.model.js';
  */
 export async function listUsers(req, res, next) {
   try {
+    const users = await User.find();
+    res.status(200).json(users);
     // Your code here
   } catch (error) {
     next(error);
@@ -24,6 +26,12 @@ export async function listUsers(req, res, next) {
  */
 export async function getUser(req, res, next) {
   try {
+    const { id } = req.params;
+    const userId = new mongoose.Types.ObjectId(id);
+    const user = await User.findById(userId);
+    if (!user)
+      return res.status(404).json({ error: { message: "User not found" } });
+    res.status(200).json(user);
     // Your code here
   } catch (error) {
     next(error);
@@ -40,6 +48,12 @@ export async function getUser(req, res, next) {
  */
 export async function deleteUser(req, res, next) {
   try {
+    const { id } = req.params;
+    const userId = new mongoose.Types.ObjectId(id);
+    const deleteUser = await User.findByIdAndDelete(userId);
+    if (!deleteUser)
+      return res.status(404).json({ error: { message: "User not found" } });
+    res.status(200).json({ message: "User deleted successfully" });
     // Your code here
   } catch (error) {
     next(error);
