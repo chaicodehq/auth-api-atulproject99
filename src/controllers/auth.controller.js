@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import User from "../models/user.model.js";
+import { User } from "../models/user.model.js";
 import { signToken } from "../utils/jwt.js";
 
 /**
@@ -14,20 +14,19 @@ import { signToken } from "../utils/jwt.js";
 
 export async function register(req, res, next) {
   try {
-    if (!req.body) return res.status(400).json({ message: "Data is required" });
-    const { name, email, password, role } = req.body;
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Data is required" });
-    }
-    console.log(`Name ${name} email ${email} password ${password}`);
+    const { name, email, password, role } = req.value;
     const user = await User.findOne({ email });
     if (user)
       return res
         .status(409)
         .json({ error: { message: "Email already exists" } });
-    const currentUser = new User({ name, email, password, role });
-    const savedUser = await currentUser.save();
-    return res.status(201).json(savedUser);
+    const currentUser = await User.create({
+      name,
+      email,
+      password,
+      role,
+    });
+    return res.status(201).json({ user: currentUser });
     // Your code here
   } catch (error) {
     next(error);
@@ -48,12 +47,7 @@ export async function register(req, res, next) {
 export async function login(req, res, next) {
   // Your code here
   try {
-    if (!req.body) return res.status(400).json({ message: "Data is required" });
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: "Data is required" });
-    }
-    console.log(`email ${email}`);
+    const { email, password } = req.value;
     const user = await User.findOne({ email }).select("+password");
     if (!user)
       return res
@@ -67,11 +61,10 @@ export async function login(req, res, next) {
         .json({ error: { message: "Invalid credentials" } });
     /// Generate JWT
     const token = signToken({
-      id: user._id,
+      userId: user._id,
       role: user.role,
       email: user.email,
     });
-    console.log(`token ${token}`);
     return res.status(200).json({ user, token });
   } catch (error) {
     next(error);

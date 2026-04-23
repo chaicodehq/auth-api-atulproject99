@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "../models/user.model.js";
+import { User } from "../models/user.model.js";
 /**
  * TODO: List all users (Admin only)
  *
@@ -9,7 +9,7 @@ import User from "../models/user.model.js";
 export async function listUsers(req, res, next) {
   try {
     const users = await User.find();
-    res.status(200).json(users);
+    res.status(200).json({ users });
     // Your code here
   } catch (error) {
     next(error);
@@ -31,7 +31,7 @@ export async function getUser(req, res, next) {
     const user = await User.findById(userId);
     if (!user)
       return res.status(404).json({ error: { message: "User not found" } });
-    res.status(200).json(user);
+    res.status(200).json({ user });
     // Your code here
   } catch (error) {
     next(error);

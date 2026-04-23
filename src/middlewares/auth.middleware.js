@@ -1,4 +1,4 @@
-import User from "../models/user.model.js";
+import { User } from "../models/user.model.js";
 import { verifyToken } from "../utils/jwt.js";
 /**
  * TODO: Authenticate user using JWT
@@ -23,7 +23,9 @@ export async function authenticate(req, res, next) {
     const token = authorizationToken.split(" ")[1];
     const decodeToken = verifyToken(token);
     console.log(decodeToken);
-    const user = await User.findById(decodeToken.id);
+    const user = await User.findById(decodeToken.userId);
+    if (!user)
+      return res.status(401).json({ error: { message: "Invalid token" } });
     req.user = user;
     next();
     // Your code here

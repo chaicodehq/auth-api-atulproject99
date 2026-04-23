@@ -51,8 +51,6 @@ const userSchema = new mongoose.Schema(
     toJSON: {
       transform: (doc, ret) => {
         console.log(ret);
-        ret.userId = ret._id;
-        delete ret._id;
         delete ret.__v;
         delete ret.password;
       },
@@ -82,4 +80,4 @@ userSchema.pre("save", async function () {
   this.password = hashedPassword;
 });
 // TODO: Create and export the User model
-export default mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema);
